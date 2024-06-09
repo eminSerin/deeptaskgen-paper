@@ -20,7 +20,7 @@ from utils.utils import DataLoader
 MASK = nib.load("utils/templates/MNI_2mm_brain_mask_crop.nii")
 
 CONFIG = {
-    "est": Ridge(),
+    "est": Ridge(solver="lsqr"),
     "kfold": 10,
     "inner_cv": 5,
     "n_jobs": 5,
@@ -47,10 +47,17 @@ DATA_MAP = {
 }
 
 
+def alpha_heuristic(X, estimator):
+    # Set alpha parameter based on features and samples
+    n_samples, n_features = X.shape
+    alpha = n_features / n_samples
+    estimator.set_params(alpha=alpha)
+    return estimator
+
+
 def run_cv_fold(train_idx, test_idx, X, y, estimator):
     # Set alpha parameter based on features and samples
-    n_samples, n_features = X[train_idx].shape
-    estimator.set_params(alpha=(n_features / n_samples))
+    estimator = alpha_heuristic(X[train_idx], estimator)
     estimator.fit(X[train_idx], y[train_idx])
     y_pred = estimator.predict(X[test_idx]).astype(np.float32)
     gc.collect()
@@ -69,6 +76,7 @@ def custom_cv(X, y, estimator, CONFIG):
     )
 
     perf_dict = {}
+    estimator = alpha_heuristic(X, estimator)
     estimator.fit(X, y)
     perf_dict["y_true"] = np.hstack(y_true)
     perf_dict["y_pred"] = np.hstack(y_pred)
@@ -86,18 +94,11 @@ def main(dataset, contrast):
     work_dir = op.join(WORK_DIR, dataset)
     os.makedirs(work_dir, exist_ok=True)
     y = target_db["age"].values.astype(np.float32)
-    if contrast != "rest":
-        X = DataLoader(
-            data_path=op.join(DATA_MAP[dataset], "contrast_z_maps", contrast),
-            mask=MASK,
-            rest=False,
-        ).load_data(target_db["subject"].values)
-    else:
-        X = DataLoader(
-            data_path=op.join(DATA_MAP[dataset], "rest"),
-            mask=MASK,
-            rest=True,
-        ).load_data(target_db["subject"].values)
+    X = DataLoader(
+        data_path=op.join(DATA_MAP[dataset], "contrast_z_maps", contrast),
+        mask=MASK,
+        rest=False,
+    ).load_data(target_db["subject"].values)
 
     # Run Repeated Cross-Validation Scheme
     print("Running Holdout Nested Cross Validation...")
@@ -128,7 +129,7 @@ def main(dataset, contrast):
 if __name__ == "__main__":
     for dataset in DATA_MAP:
         if dataset == "ukb_actual":
-            for contrast in ["EMOTION FACES-SHAPES", "REST"]:
+            for contrast in ["EMOTION FACES-SHAPES"]:
                 main(dataset, contrast.replace(" ", "_").lower())
         else:
             for contrast in CONTRASTS:
