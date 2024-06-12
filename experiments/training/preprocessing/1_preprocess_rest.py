@@ -10,17 +10,18 @@ from joblib import Parallel, delayed
 from nilearn.masking import apply_mask
 from tqdm import tqdm
 
-sys.path.append("../../..")
+sys.path.append(op.abspath(op.join(__file__, "../../..")))
 from utils.dual_regression import _extract_timeseries
 from utils.utils import compute_corr_coeff, crop_img_w_ref
 
-HCP_ICA = "utils/templates/melodic_IC_MNI_2mm.nii.gz"
-MNI_BRAIN_MASK = "utils/templates/MNI_2mm_brain_mask.nii"
-MNI_CROP_MASK = "utils/templates/MNI_2mm_brain_mask_crop.nii"
-RAW_DIR = "training/data/raw"
-OUT_DIR = "training/data/rest"
-SUBJ_IDS = np.genfromtxt("training/data/hcp_all_ids.txt", dtype=str)
-N_CORES = 4
+ABS_PATH = sys.path[-1]
+HCP_ICA = op.join(ABS_PATH, "utils/templates/melodic_IC_MNI_2mm.nii.gz")
+MNI_BRAIN_MASK = op.join(ABS_PATH, "utils/templates/MNI_2mm_brain_mask.nii")
+MNI_CROP_MASK = op.join(ABS_PATH, "utils/templates/MNI_2mm_brain_mask_crop.nii")
+RAW_DIR = op.join(ABS_PATH, "training/data/raw")
+OUT_DIR = op.join(ABS_PATH, "training/data/rest")
+SUBJ_IDS = np.genfromtxt(op.join(ABS_PATH, "training/data/hcp_all_ids.txt"), dtype=str)
+N_CORES = 1
 NUM_SAMPLES = 8
 TOTAL_TP = 4800
 

@@ -2,33 +2,35 @@ import os.path as op
 import subprocess
 import sys
 
-sys.path.append("../../../..")
-
+sys.path.append(op.abspath(op.join(__file__, "../../../..")))
+ABS_PATH = sys.path[-1]
 
 # Prediction related args.
 EPOCHS = 50
 LR = 1e-3
 N_JOBS = 4
 BATCH_SIZE = 12
-REST_DIR = op.realpath("experiments/transfer_learning/hcp_development/data/rest")
-TASK_DIR = op.realpath("experiments/transfer_learning/hcp_development/data/task_reward")
-TRAIN_FUNC = "deeptaskgen/deeptaskgen/train.py"
-WORKING_DIR = op.realpath(
-    f"experiments/transfer_learning/hcp_development/results/finetuned_50_0.001_gambling-reward"
+REST_DIR = op.join(ABS_PATH, "experiments/transfer_learning/hcp_development/data/rest")
+TASK_DIR = op.join(
+    ABS_PATH, "experiments/transfer_learning/hcp_development/data/task_reward"
+)
+TRAIN_FUNC = op.join(ABS_PATH, "deeptaskgen/deeptaskgen/train.py")
+WORKING_DIR = op.join(
+    ABS_PATH,
+    "experiments/transfer_learning/hcp_development/results/finetuned_50_0.001_gambling-reward",
 )
 # Model trained on HCP-YA (gambling-reward).
-CHECKPOINT = op.realpath(
-    f"experiments/transfer_learning/hcp_development/hcp-ya_gambling-reward.ckpt"
+CHECKPOINT = op.join(
+    ABS_PATH,
+    "experiments/transfer_learning/hcp_development/hcp-ya_gambling-reward.ckpt",
 )
-
 # Subjects!
-TRAIN_LIST = op.realpath(
-    "experiments/transfer_learning/hcp_development/data/hcpd_train_ids.txt"
+TRAIN_LIST = op.join(
+    ABS_PATH, "experiments/transfer_learning/hcp_development/data/hcpd_train_ids.txt"
 )
-VAL_LIST = op.realpath(
-    "experiments/transfer_learning/hcp_development/data/hcp_val_ids.txt"
+VAL_LIST = op.join(
+    ABS_PATH, "experiments/transfer_learning/hcp_development/data/hcp_val_ids.txt"
 )
-
 # Prediction arguments.
 args = [
     f"--rest_dir={REST_DIR}",

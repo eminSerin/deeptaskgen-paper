@@ -5,12 +5,15 @@ import sys
 import pytorch_lightning as pl
 import torch
 
-sys.path.append("../../../..")
+sys.path.append(op.abspath(op.join(__file__, "../../../..")))
 from deeptaskgen.deeptaskgen.models.unet import UNet3DMinimal
 
 # Model trained on HCP-YA with 47 task contrast maps.
+ABS_PATH = sys.path[-1]
 REF_MODEL = torch.load(
-    "experiments/training/results/unetminimal_100_0.001/best_r2.ckpt",
+    op.join(
+        ABS_PATH, "experiments/training/results/unetminimal_100_0.001/best_r2.ckpt"
+    ),
     map_location="cpu",
 )
 CONT_MAP = {"emotion-faces-shapes": 11, "gambling-reward": 45}
@@ -57,7 +60,7 @@ for cont in CONT_MAP:
     )
     # Save model
     out_mdl_path = op.realpath(
-        "experiments/transfer_learning/hcp_development/preprocessing"
+        op.join(ABS_PATH, "experiments/transfer_learning/hcp_development/preprocessing")
     )
     trainer = pl.Trainer(default_root_dir=out_mdl_path)
     trainer.strategy.connect(pretrained_model)

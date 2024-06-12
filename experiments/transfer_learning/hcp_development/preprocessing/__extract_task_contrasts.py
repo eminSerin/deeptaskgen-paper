@@ -11,8 +11,8 @@ import pandas as pd
 from nilearn.glm.first_level import FirstLevelModel, make_first_level_design_matrix
 from tqdm import tqdm
 
-sys.path.append("../../..")
-
+sys.path.append(op.abspath(op.join(__file__, "../../..")))
+ABS_PATH = sys.path[-1]
 
 TASK_INFO = dict(
     guessing=dict(
@@ -28,7 +28,9 @@ TASK_INFO = dict(
         name=["faces", "shapes", "faces-shapes"],
     ),
 )
-DATA_DIR = op.realpath("experiments/transfer_learning/hcp_development/data/raw")
+DATA_DIR = op.realpath(
+    op.join(ABS_PATH, "experiments/transfer_learning/hcp_development/data/raw")
+)
 
 
 def fit_firstlevel(file, task, events, confound, mask):
@@ -86,8 +88,8 @@ if __name__ == "__main__":
                 "*",
                 "MNINonLinear",
                 "Results",
-                f"tfMRI_*",
-                f"tfMRI_*_hp0_clean.nii.gz",
+                "tfMRI_*",
+                "tfMRI_*_hp0_clean.nii.gz",
             )
         )
     )

@@ -2,34 +2,58 @@ import os.path as op
 import sys
 import warnings
 
-import nibabel as nib
 import numpy as np
 from joblib import Parallel, delayed
 from tqdm import tqdm
 
-sys.path.append("../../../..")
+sys.path.append(op.abspath(op.join(__file__, "../../../..")))
 from utils.utils import compute_corr_coeff
 
 warnings.filterwarnings("ignore")
 
-TEST_SUBJ = "experiments/transfer_learning/hcp_development/data/hcpd_test_ids.txt"
+ABS_PATH = sys.path[-1]
+TEST_SUBJ = op.join(
+    ABS_PATH, "experiments/transfer_learning/hcp_development/data/hcpd_test_ids.txt"
+)
 TASK_MAP = {
     "emotion_faces-shapes": {
         "idx": 11,
-        "actual": "experiments/transfer_learning/hcp_development/data/task_faces",
+        "actual": op.join(
+            ABS_PATH, "experiments/transfer_learning/hcp_development/data/task_faces"
+        ),
         "pred": {
-            "finetune": "experiments/transfer_learning/hcp_development/results/finetuned_50_0.001_gambling-reward/pred",
-            "nofinetune": "experiments/transfer_learning/hcp_development/results/nofinetune/pred",
-            "tavor": "experiments/transfer_learning/hcp_development/training/results/tavor/pred",
+            "finetune": op.join(
+                ABS_PATH,
+                "experiments/transfer_learning/hcp_development/results/finetuned_50_0.001_gambling-reward/pred",
+            ),
+            "nofinetune": op.join(
+                ABS_PATH,
+                "experiments/transfer_learning/hcp_development/results/nofinetune/pred",
+            ),
+            "tavor": op.join(
+                ABS_PATH,
+                "experiments/transfer_learning/hcp_development/training/results/tavor/pred",
+            ),
         },
     },
     "gambling_reward": {
         "idx": 45,
-        "actual": "experiments/transfer_learning/hcp_development/data/task_reward",
+        "actual": op.join(
+            ABS_PATH, "experiments/transfer_learning/hcp_development/data/task_reward"
+        ),
         "pred": {
-            "finetune": "experiments/transfer_learning/hcp_development/results/finetuned_50_0.001_emotion-faces-shapes/pred",
-            "nofinetune": "experiments/transfer_learning/hcp_development/results/nofinetune/pred",
-            "tavor": "experiments/transfer_learning/hcp_development/training/results/tavor/pred",
+            "finetune": op.join(
+                ABS_PATH,
+                "experiments/transfer_learning/hcp_development/results/finetuned_50_0.001_emotion-faces-shapes/pred",
+            ),
+            "nofinetune": op.join(
+                ABS_PATH,
+                "experiments/transfer_learning/hcp_development/results/nofinetune/pred",
+            ),
+            "tavor": op.join(
+                ABS_PATH,
+                "experiments/transfer_learning/hcp_development/training/results/tavor/pred",
+            ),
         },
     },
 }

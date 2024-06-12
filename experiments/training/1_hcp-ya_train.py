@@ -2,22 +2,26 @@ import os.path as op
 import subprocess
 import sys
 
-sys.path.append("../../../..")
-
+sys.path.append(op.abspath(op.join(__file__, "../../../..")))
+ABS_PATH = sys.path[-1]
 
 # Prediction related args.
 EPOCHS = 100
 LR = 1e-3
 N_JOBS = 4
 BATCH_SIZE = 12
-REST_DIR = op.realpath("experiments/training/data/rest")
-TASK_DIR = op.realpath("experiments/training/data/task")
-TRAIN_FUNC = "deeptaskgen/deeptaskgen/train.py"
-WORKING_DIR = op.realpath(f"experiments/training/results/unetminimal_{EPOCHS}_{LR}")
+REST_DIR = op.realpath(op.join(ABS_PATH, "experiments/training/data/rest"))
+TASK_DIR = op.realpath(op.join(ABS_PATH, "experiments/training/data/task"))
+TRAIN_FUNC = op.join(ABS_PATH, "deeptaskgen/deeptaskgen/train.py")
+WORKING_DIR = op.realpath(
+    op.join(ABS_PATH, f"experiments/training/results/unetminimal_{EPOCHS}_{LR}")
+)
 
 # Subjects!
-TRAIN_LIST = op.realpath("experiments/training/data/hcp_train_ids.txt")
-VAL_LIST = op.realpath("experiments/training/data/hcp_val_ids.txt")
+TRAIN_LIST = op.realpath(
+    op.join(ABS_PATH, "experiments/training/data/hcp_train_ids.txt")
+)
+VAL_LIST = op.realpath(op.join(ABS_PATH, "experiments/training/data/hcp_val_ids.txt"))
 
 # Prediction arguments.
 args = [

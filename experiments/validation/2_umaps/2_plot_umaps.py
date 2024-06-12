@@ -7,11 +7,12 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-sys.path.append("../../..")
+sys.path.append(op.abspath(op.join(__file__, "../../..")))
 from utils.utils import get_contrasts
 
-MASK = nib.load("utils/templates/MNI_2mm_brain_mask_crop.nii")
-FIG_DIR = "validation/2_umaps/figures"
+ABS_PATH = sys.path[-1]
+MASK = nib.load(op.join(ABS_PATH, "utils/templates/MNI_2mm_brain_mask_crop.nii"))
+FIG_DIR = op.join(ABS_PATH, "validation/2_umaps/figures")
 
 CONTRASTS = np.array(
     [f"{contrast[0]} {contrast[2]}" for contrast in np.array(get_contrasts())]
@@ -42,7 +43,9 @@ DATASETS = ["hcp_actual", "hcp_predict", "hcpd_pred", "ukb_pred"]
 
 
 def plot_umaps(dataset):
-    umap_df = pd.read_csv(f"validation/2_umaps/umaps/{dataset}_umap.csv")
+    umap_df = pd.read_csv(
+        op.join(ABS_PATH, f"validation/2_umaps/umaps/{dataset}_umap.csv")
+    )
     _, ax = plt.subplots(figsize=(5, 5), dpi=1000)
 
     # Create a scatter plot of the UMAP embeddings

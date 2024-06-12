@@ -2,28 +2,39 @@ import os.path as op
 import subprocess
 import sys
 
-sys.path.append("../../../..")
-
+sys.path.append(op.abspath(op.join(__file__, "../../../..")))
+ABS_PATH = sys.path[-1]
 
 # Prediction related args.
 EPOCHS = 50
 LR = 1e-3
 N_JOBS = 4
 BATCH_SIZE = 12
-REST_DIR = op.realpath("experiments/transfer_learning/uk_biobank/data/rest")
-TASK_DIR = op.realpath("experiments/transfer_learning/uk_biobank/data/task_faces")
-TRAIN_FUNC = "deeptaskgen/deeptaskgen/train.py"
-WORKING_DIR = op.realpath(f"experiments/transfer_learning/c/results/finetuned_50_0.001")
+REST_DIR = op.realpath(
+    op.join(ABS_PATH, "experiments/transfer_learning/uk_biobank/data/rest")
+)
+TASK_DIR = op.realpath(
+    op.join(ABS_PATH, "experiments/transfer_learning/uk_biobank/data/task_faces")
+)
+TRAIN_FUNC = op.realpath(op.join(ABS_PATH, "deeptaskgen/deeptaskgen/train.py"))
+WORKING_DIR = op.realpath(
+    op.join(ABS_PATH, "experiments/transfer_learning/c/results/finetuned_50_0.001")
+)
 # Model trained on HCP-YA (emotion-faces-shapes, Date: 20-09-2023).
 CHECKPOINT = op.realpath(
-    f"experiments/transfer_learning/uk_biobank/hcp-ya_emotion-faces-shapes_200923.ckpt"
+    op.join(
+        ABS_PATH,
+        "experiments/transfer_learning/uk_biobank/hcp-ya_emotion-faces-shapes_200923.ckpt",
+    )
 )
 
 # Subjects!
 TRAIN_LIST = op.realpath(
-    "experiments/transfer_learning/uk_biobank/data/ukb_train_ids.txt"
+    op.join(ABS_PATH, "experiments/transfer_learning/uk_biobank/data/ukb_train_ids.txt")
 )
-VAL_LIST = op.realpath("experiments/transfer_learning/uk_biobank/data/ukb_val_ids.txt")
+VAL_LIST = op.realpath(
+    op.join(ABS_PATH, "experiments/transfer_learning/uk_biobank/data/ukb_val_ids.txt")
+)
 
 # Prediction arguments.
 args = [

@@ -10,11 +10,12 @@ from nilearn.plotting import plot_stat_map
 from sklearn.preprocessing import MinMaxScaler
 from tqdm import tqdm
 
-sys.path.append("../../..")
+sys.path.append(op.abspath(op.join(__file__, "../../..")))
 from utils.utils import get_contrasts
 
-MASK = nib.load("utils/templates/MNI_2mm_brain_mask_crop.nii")
-FIG_DIR = "validation/1_group_maps/figures"
+ABS_PATH = sys.path[-1]
+MASK = nib.load(op.join(ABS_PATH, "utils/templates/MNI_2mm_brain_mask_crop.nii"))
+FIG_DIR = op.join(ABS_PATH, "validation/1_group_maps/figures")
 
 CONTRASTS = np.array(
     [f"{contrast[0]} {contrast[2]}" for contrast in np.array(get_contrasts())]
@@ -30,10 +31,18 @@ TASK_COORDS = {
     "SOCIAL": (50, -56, 18),
 }
 DIRECTORY_MAP = {
-    "hcp_actual": "training/data/task/contrast_z_maps",
-    "hcp_pred": "training/results/unetminimal_100_0.001/contrast_z_maps",
-    "hcpd_pred": "experiments/transfer_learning/hcp_development/results/finetuned_50_0.001_emotion-faces-shapes/contrast_z_maps",
-    "ukb_pred": "experiments/transfer_learning/ukb/results/finetuned_50_0.001_emotion-faces-shapes/contrast_z_maps",
+    "hcp_actual": op.join(ABS_PATH, "training/data/task/contrast_z_maps"),
+    "hcp_pred": op.join(
+        ABS_PATH, "training/results/unetminimal_100_0.001/contrast_z_maps"
+    ),
+    "hcpd_pred": op.join(
+        ABS_PATH,
+        "experiments/transfer_learning/hcp_development/results/finetuned_50_0.001_emotion-faces-shapes/contrast_z_maps",
+    ),
+    "ukb_pred": op.join(
+        ABS_PATH,
+        "experiments/transfer_learning/ukb/results/finetuned_50_0.001_emotion-faces-shapes/contrast_z_maps",
+    ),
 }
 OUTPUT_EXT = "png"
 DPI = 1000
@@ -82,7 +91,7 @@ def plot_contrast(cont, data_path, dataset):
     fig_file_base = op.join(FIG_DIR, cont, f"{dataset}_")
 
     # Plot group mean
-    bmap = nib.load(op.join(data_path, cont, f"group_mean.nii.gz"))
+    bmap = nib.load(op.join(data_path, cont, "group_mean.nii.gz"))
     plot_save_fig(
         bmap,
         TASK_COORDS[task],

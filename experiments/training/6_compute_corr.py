@@ -7,18 +7,21 @@ import numpy as np
 from joblib import Parallel, delayed
 from tqdm import tqdm
 
-sys.path.append("../../../..")
+sys.path.append(op.abspath(op.join(__file__, "../../../..")))
 from utils.utils import compute_corr_coeff
 
 warnings.filterwarnings("ignore")
 
-ACTUAL_PATH = "experiments/training/data/task"
-TEST_SUBJ = "experiments/training/data/hcp_test_ids.txt"
+ABS_PATH = sys.path[-1]
+ACTUAL_PATH = op.join(ABS_PATH, "experiments/training/data/task")
+TEST_SUBJ = op.join(ABS_PATH, "experiments/training/data/hcp_test_ids.txt")
 TASK_MAP = {
-    "deeptaskgen": "experiments/training/results/unetminimal_100_0.001/pred",
-    "tavor": "experiments/training/results/tavor/pred",
-    "retest": "experiments/training/data/task_retest",
-    "group_avg": "experiments/training/results/avg_train_task.npy",
+    "deeptaskgen": op.join(
+        ABS_PATH, "experiments/training/results/unetminimal_100_0.001/pred"
+    ),
+    "tavor": op.join(ABS_PATH, "experiments/training/results/tavor/pred"),
+    "retest": op.join(ABS_PATH, "experiments/training/data/task_retest"),
+    "group_avg": op.join(ABS_PATH, "experiments/training/results/avg_train_task.npy"),
 }
 EXT_MAP = {
     "actual": "_joint_MNI_task_contrasts.npy",

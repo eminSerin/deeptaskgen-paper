@@ -7,15 +7,18 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import KFold
 
-sys.path.append("../../../..")
+sys.path.append(op.abspath(op.join(__file__, "../../../..")))
 
-TARGET_DIR = "experiments/validation/3_prediction/3.1_brain_age_prediction/targets/"
-os.makedirs(TARGET_DIR)
+ABS_PATH = sys.path[-1]
+TARGET_DIR = op.join(
+    ABS_PATH, "experiments/validation/3_prediction/3.1_brain_age_prediction/targets/"
+)
+os.makedirs(TARGET_DIR, exist_ok=True)
 
 if __name__ == "__main__":
     # UK Biobank
     beh = pd.read_csv(
-        "experiments/transfer_learning/ukb/data/ukb_test_ids.txt",
+        op.join(ABS_PATH, "experiments/transfer_learning/ukb/data/ukb_test_ids.txt"),
         header=None,
         names=["subject"],
     )
@@ -23,7 +26,9 @@ if __name__ == "__main__":
     # Age
     beh = beh.merge(
         pd.read_csv(
-            "validation/3_prediction/__ukb_phenotypes/age_ICV.csv",  # Edit here based on your own path to age file.
+            op.join(
+                ABS_PATH, "validation/3_prediction/__ukb_phenotypes/age_ICV.csv"
+            ),  # Edit here based on your own path to age file.
         )[["eid", "age"]].rename(columns={"eid": "subject"}),
         on="subject",
     )
@@ -31,7 +36,10 @@ if __name__ == "__main__":
     # Sex
     beh = beh.merge(
         pd.read_csv(
-            "/validation/3_prediction/__ukb_phenotypes/01_basic_demographics.csv"
+            op.join(
+                ABS_PATH,
+                "validation/3_prediction/__ukb_phenotypes/01_basic_demographics.csv",
+            )
         )[["eid", "31-0.0"]].rename(columns={"31-0.0": "sex", "eid": "subject"}),
         on="subject",
     )
@@ -43,7 +51,10 @@ if __name__ == "__main__":
     beh = beh.merge(
         pd.concat(
             pd.read_csv(
-                "/validation/3_prediction/__ukb_phenotypes/32_cognitive_phenotypes.csv",
+                op.join(
+                    ABS_PATH,
+                    "validation/3_prediction/__ukb_phenotypes/32_cognitive_phenotypes.csv",
+                ),
                 usecols=["eid", "20016-2.0"],
                 chunksize=chunksize,
             )
@@ -53,9 +64,14 @@ if __name__ == "__main__":
 
     # Overall Health
     beh = beh.merge(
-        pd.read_csv("/validation/3_prediction/__ukb_phenotypes/50_health_outcomes.csv")[
-            ["eid", "2178-2.0"]
-        ].rename(columns={"2178-2.0": "overall_health", "eid": "subject"}),
+        pd.read_csv(
+            op.join(
+                ABS_PATH,
+                "validation/3_prediction/__ukb_phenotypes/50_health_outcomes.csv",
+            )
+        )[["eid", "2178-2.0"]].rename(
+            columns={"2178-2.0": "overall_health", "eid": "subject"}
+        ),
         on="subject",
     )
 
@@ -63,7 +79,10 @@ if __name__ == "__main__":
     beh = beh.merge(
         pd.concat(
             pd.read_csv(
-                "/validation/3_prediction/__ukb_phenotypes/20_physical_general.csv",
+                op.join(
+                    ABS_PATH,
+                    "validation/3_prediction/__ukb_phenotypes/20_physical_general.csv",
+                ),
                 usecols=["eid", "46-2.0", "47-2.0", "1707-2.0"],
                 chunksize=chunksize,
             )
@@ -86,7 +105,11 @@ if __name__ == "__main__":
         beh["grip_left"],
     ]
     beh["strength"] = np.select(conditions, choices, default=np.nan)
-    beh.to_csv("validation/3_prediction/__ukb_phenotypes/ukb_all_targets.csv")
+    beh.to_csv(
+        op.join(
+            ABS_PATH, "validation/3_prediction/__ukb_phenotypes/ukb_all_targets.csv"
+        )
+    )
 
     # Prepare target for brain-age prediction
     age = beh[beh["age"].notna()]

@@ -18,13 +18,13 @@ COPEIDS = {
     "MOTOR": (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13),
     "GAMBLING": (1, 2, 3),
 }
-
-SUBJ_IDS = np.genfromtxt("training/data/hcp_test_ids.txt", dtype=str)
+ABS_PATH = op.abspath(op.join(__file__, "../../.."))
+SUBJ_IDS = np.genfromtxt(op.join(ABS_PATH, "training/data/hcp_test_ids.txt"), dtype=str)
 DATASET = "HCP_Retest"
 TASK_EXT = "zstat1.dtseries.nii"
 
 # Define main directories
-RAW_DIR = "training/data/raw_retest"
+RAW_DIR = op.join(ABS_PATH, "training/data/raw_retest")
 os.makedirs(RAW_DIR, exist_ok=True)
 ERR_DIR = op.join(RAW_DIR, "errors")
 os.makedirs(ERR_DIR, exist_ok=True)

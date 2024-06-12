@@ -7,32 +7,44 @@ import numpy as np
 from joblib import Parallel, delayed
 from tqdm import tqdm
 
-sys.path.append("../../..")
+sys.path.append(op.abspath(op.join(__file__, "../../..")))
 from utils.utils import get_contrasts
 
-MASK = nib.load("utils/templates/MNI_2mm_brain_mask_crop.nii")
+ABS_PATH = sys.path[-1]
+MASK = nib.load(op.join(ABS_PATH, "utils/templates/MNI_2mm_brain_mask_crop.nii"))
 CONTRASTS = np.array(
     [f"{contrast[0]} {contrast[2]}" for contrast in np.array(get_contrasts())]
 )
 # Keys represents: Actual HCP-YA, Predicted HCP-YA, Predicted HCP-D, and Predicted UKB.
 DIRECTORIES_MAP = {
-    "training/data/task": {
-        "subj_ids": "training/data/hcp_all_ids.txt",
+    op.join(ABS_PATH, "training/data/task"): {
+        "subj_ids": op.join(ABS_PATH, "training/data/hcp_all_ids.txt"),
         "pred": False,
         "multi_set": False,
     },
-    "training/results/unetminimal_100_0.001/pred": {
-        "subj_ids": "training/data/hcp_all_ids.txt",
+    op.join(ABS_PATH, "training/results/unetminimal_100_0.001/pred"): {
+        "subj_ids": op.join(ABS_PATH, "training/data/hcp_all_ids.txt"),
         "pred": True,
         "multi_set": True,
     },
-    "experiments/transfer_learning/hcp_development/results/finetuned_50_0.001_emotion-faces-shapes/pred": {
-        "subj_ids": "experiments/transfer_learning/hcp_development/data/hcpd_all_ids.txt",
+    op.join(
+        ABS_PATH,
+        "experiments/transfer_learning/hcp_development/results/finetuned_50_0.001_emotion-faces-shapes/pred",
+    ): {
+        "subj_ids": op.join(
+            ABS_PATH,
+            "experiments/transfer_learning/hcp_development/data/hcpd_all_ids.txt",
+        ),
         "pred": True,
         "multi_set": False,
     },
-    "experiments/transfer_learning/ukb/results/finetuned_50_0.001_emotion-faces-shapes/pred": {
-        "subj_ids": "experiments/transfer_learning/ukb/data/ukb_test_ids.txt",
+    op.join(
+        ABS_PATH,
+        "experiments/transfer_learning/ukb/results/finetuned_50_0.001_emotion-faces-shapes/pred",
+    ): {
+        "subj_ids": op.join(
+            ABS_PATH, "experiments/transfer_learning/ukb/data/ukb_test_ids.txt"
+        ),
         "pred": True,
         "multi_set": False,
     },

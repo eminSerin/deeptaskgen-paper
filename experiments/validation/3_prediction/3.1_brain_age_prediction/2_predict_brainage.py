@@ -14,10 +14,11 @@ from sklearn.linear_model import Ridge
 from sklearn.model_selection import KFold
 from tqdm.auto import tqdm
 
-sys.path.append("../../../..")
+sys.path.append(op.abspath(op.join(__file__, "../../../..")))
 from utils.utils import DataLoader
 
-MASK = nib.load("utils/templates/MNI_2mm_brain_mask_crop.nii")
+ABS_PATH = sys.path[-1]
+MASK = nib.load(op.join(ABS_PATH, "utils/templates/MNI_2mm_brain_mask_crop.nii"))
 
 CONFIG = {
     "est": Ridge(solver="lsqr"),
@@ -27,10 +28,13 @@ CONFIG = {
     "seed": 42,
     "n_holdout": 10,
 }
-TARGET_PATH = "validation/3_prediction/3.1_brain_age_prediction/targets/ukb_age.csv"
-WORK_DIR = "validation/3_prediction/3.1_brain_age_prediction/results"
-INDEX_PATH = (
-    "validation/3_prediction/3.1_brain_age_prediction/targets/ukb_age_holdout.pkl"
+TARGET_PATH = op.join(
+    ABS_PATH, "validation/3_prediction/3.1_brain_age_prediction/targets/ukb_age.csv"
+)
+WORK_DIR = op.join(ABS_PATH, "validation/3_prediction/3.1_brain_age_prediction/results")
+INDEX_PATH = op.join(
+    ABS_PATH,
+    "validation/3_prediction/3.1_brain_age_prediction/targets/ukb_age_holdout.pkl",
 )
 CONTRASTS = (
     "LANGUAGE MATH-STORY",
@@ -42,8 +46,10 @@ CONTRASTS = (
     "GAMBLING REWARD",
 )
 DATA_MAP = {
-    "ukb_actual": "experiments/transfer_learning/uk_biobank/data/",
-    "ukb_predict": "experiments/transfer_learning/uk_biobank/results/finetuned_50_0.001/",
+    "ukb_actual": op.join(ABS_PATH, "experiments/transfer_learning/uk_biobank/data/"),
+    "ukb_predict": op.join(
+        ABS_PATH, "experiments/transfer_learning/uk_biobank/results/finetuned_50_0.001/"
+    ),
 }
 
 

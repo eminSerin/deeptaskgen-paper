@@ -6,23 +6,33 @@ import sys
 import numpy as np
 from tqdm import tqdm
 
-sys.path.append("../../../..")
+sys.path.append(op.abspath(op.join(__file__, "../../../..")))
+ABS_PATH = sys.path[-1]
 
-REST_DIR = op.realpath("experiments/transfer_learning/hcp_development/data/rest")
+REST_DIR = op.realpath(
+    op.join(ABS_PATH, "experiments/transfer_learning/hcp_development/data/rest")
+)
 WORKING_DIR = op.realpath(
-    "experiments/transfer_learning/hcp_development/training/results/tavor"
+    op.join(
+        ABS_PATH, "experiments/transfer_learning/hcp_development/training/results/tavor"
+    )
 )
 PREDS_DIR = op.join(WORKING_DIR, "preds")
 os.makedirs(PREDS_DIR, exist_ok=True)
 TEST_LIST = op.realpath(
-    "experiments/transfer_learning/hcp_development/data/hcpd_test_ids.txt"
+    op.join(
+        ABS_PATH, "experiments/transfer_learning/hcp_development/data/hcpd_test_ids.txt"
+    )
 )
 N_JOBS = 16
 N_CONTRASTS = 47
 N_SAMPLE = 8
 
 if __name__ == "__main__":
-    with open("experiments/training/results/tavor/tavor_hcp_model.pkl", "rb") as f:
+    with open(
+        op.join(ABS_PATH, "experiments/training/results/tavor/tavor_hcp_model.pkl"),
+        "rb",
+    ) as f:
         models = pickle.load(f)
     subj_ids = np.genfromtxt(TEST_LIST, dtype=str)
     for subj in tqdm(subj_ids):

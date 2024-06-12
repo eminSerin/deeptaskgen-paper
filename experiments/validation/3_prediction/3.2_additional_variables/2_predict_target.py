@@ -14,10 +14,11 @@ from sklearn.linear_model import Ridge, RidgeClassifier
 from sklearn.model_selection import KFold
 from tqdm.auto import tqdm
 
-sys.path.append("../../../..")
+sys.path.append(op.abspath(op.join(__file__, "../../../..")))
 from utils.utils import DataLoader
 
-MASK = nib.load("utils/templates/MNI_2mm_brain_mask_crop.nii")
+ABS_PATH = sys.path[-1]
+MASK = nib.load(op.join(ABS_PATH, "utils/templates/MNI_2mm_brain_mask_crop.nii"))
 
 CONFIG = {
     "kfold": 10,
@@ -37,8 +38,10 @@ TARGET_MAP = {
     "strength": "regression",
 }
 
-TARGET_PATH = "validation/3_prediction/3.1_brain_age_prediction/targets/"
-WORK_DIR = "validation/3_prediction/3.1_brain_age_prediction/results"
+TARGET_PATH = op.join(
+    ABS_PATH, "validation/3_prediction/3.1_brain_age_prediction/targets/"
+)
+WORK_DIR = op.join(ABS_PATH, "validation/3_prediction/3.1_brain_age_prediction/results")
 CONTRASTS = (
     "LANGUAGE MATH-STORY",
     "RELATIONAL REL",
@@ -49,8 +52,10 @@ CONTRASTS = (
     "GAMBLING REWARD",
 )
 DATA_MAP = {
-    "ukb_actual": "experiments/transfer_learning/uk_biobank/data/",
-    "ukb_predict": "experiments/transfer_learning/uk_biobank/results/finetuned_50_0.001/",
+    "ukb_actual": op.join(ABS_PATH, "experiments/transfer_learning/uk_biobank/data/"),
+    "ukb_predict": op.join(
+        ABS_PATH, "experiments/transfer_learning/uk_biobank/results/finetuned_50_0.001/"
+    ),
 }
 
 

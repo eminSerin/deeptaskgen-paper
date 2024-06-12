@@ -6,16 +6,20 @@ import nibabel as nib
 import numpy as np
 from joblib import Parallel, delayed
 
-sys.path.append("../../..")
+sys.path.append(op.abspath(op.join(__file__, "../../..")))
 from utils.utils import crop_img_w_ref
 
-MNI_CROP_MASK = "utils/templates/MNI_2mm_brain_mask_crop.nii"
-DATA_DIR = op.realpath("transfer_learning/hcp_development/data/raw")
+ABS_PATH = sys.path[-1]
+
+MNI_CROP_MASK = op.join(ABS_PATH, "utils/templates/MNI_2mm_brain_mask_crop.nii")
+DATA_DIR = op.realpath(op.join(ABS_PATH, "transfer_learning/hcp_development/data/raw"))
 CONTRASTS = {
     "EMOTION": "faces-shapes",
     "GAMBLING": "reward",
 }
-SUBJ_IDS = np.genfromtxt("transfer_learning/hcp_development/data/hcpd_all_ids.txt")
+SUBJ_IDS = np.genfromtxt(
+    op.join(ABS_PATH, "transfer_learning/hcp_development/data/hcpd_all_ids.txt")
+)
 N_JOBS = 8
 
 

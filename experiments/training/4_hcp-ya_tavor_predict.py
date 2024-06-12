@@ -6,13 +6,14 @@ import sys
 import numpy as np
 from tqdm import tqdm
 
-sys.path.append("../../../..")
+sys.path.append(op.abspath(op.join(__file__, "../../../..")))
+ABS_PATH = sys.path[-1]
 
-REST_DIR = op.realpath("experiments/training/data/rest")
-WORKING_DIR = op.realpath("experiments/training/results/tavor")
+REST_DIR = op.realpath(op.join(ABS_PATH, "experiments/training/data/rest"))
+WORKING_DIR = op.realpath(op.join(ABS_PATH, "experiments/training/results/tavor"))
 PREDS_DIR = op.join(WORKING_DIR, "pred")
 os.makedirs(PREDS_DIR, exist_ok=True)
-TEST_LIST = op.realpath("experiments/training/data/hcp_test_ids.txt")
+TEST_LIST = op.realpath(op.join(ABS_PATH, "experiments/training/data/hcp_test_ids.txt"))
 N_JOBS = 16
 N_CONTRASTS = 47
 N_SAMPLE = 8

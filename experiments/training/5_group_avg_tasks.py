@@ -5,11 +5,14 @@ from glob import glob
 import numpy as np
 from tqdm import tqdm
 
-sys.path.append("../../../..")
+sys.path.append(op.abspath(op.join(__file__, "../../../..")))
+ABS_PATH = sys.path[-1]
 
-TASK_DIR = op.realpath("experiments/training/data/task")
-WORKING_DIR = op.realpath(f"experiments/training/results/")
-TRAIN_LIST = op.realpath("experiments/training/data/hcp_train_ids.txt")
+TASK_DIR = op.realpath(op.join(ABS_PATH, "experiments/training/data/task"))
+WORKING_DIR = op.realpath(op.join(ABS_PATH, "experiments/training/results/"))
+TRAIN_LIST = op.realpath(
+    op.join(ABS_PATH, "experiments/training/data/hcp_train_ids.txt")
+)
 
 if __name__ == "__main__":
     """Compute the average task for the training set."""

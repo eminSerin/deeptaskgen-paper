@@ -2,20 +2,30 @@ import os.path as op
 import subprocess
 import sys
 
-sys.path.append("../../../..")
+sys.path.append(op.abspath(op.join(__file__, "../../../..")))
+ABS_PATH = sys.path[-1]
 
 # Prediction related args.
 TEST_LIST = op.realpath(
-    "experiments/transfer_learning/hcp_development/data/hcpd_test_ids.txt"
+    op.join(
+        ABS_PATH, "experiments/transfer_learning/hcp_development/data/hcpd_test_ids.txt"
+    )
 )
-REST_DIR = op.realpath("experiments/transfer_learning/hcp_development/data/rest")
+REST_DIR = op.realpath(
+    op.join(ABS_PATH, "experiments/transfer_learning/hcp_development/data/rest")
+)
 PRED_DIR = op.realpath(
-    "experiments/transfer_learning/hcp_development/results/nofinetune/pred"
+    op.join(
+        ABS_PATH,
+        "experiments/transfer_learning/hcp_development/results/nofinetune/pred",
+    )
 )
-PREDICT_FUNC = op.realpath("deeptaskgen/deeptaskgen/predict.py")
+PREDICT_FUNC = op.realpath(op.join(ABS_PATH, "deeptaskgen/deeptaskgen/predict.py"))
 
 # No-Finetuned model only trained on HCP-YA for 47 task contrasts.
-CHECKPOINT = "experiments/training/results/unetminimal_100_0.001/best_r2.ckpt"
+CHECKPOINT = op.realpath(
+    op.join(ABS_PATH, "experiments/training/results/unetminimal_100_0.001/best_r2.ckpt")
+)
 
 for cont in CHECKPOINT:
     args = [

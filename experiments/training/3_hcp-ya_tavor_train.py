@@ -6,13 +6,16 @@ import sys
 import numpy as np
 from joblib import Parallel, delayed
 
-sys.path.append("../../../..")
+sys.path.append(op.abspath(op.join(__file__, "../../../..")))
 from utils.tavor import DataLoader, parallel_fit_wrapper
 
-REST_DIR = op.realpath("experiments/training/data/rest")
-TASK_DIR = op.realpath("experiments/training/data/task")
-WORKING_DIR = op.realpath(f"experiments/training/results/tavor")
-TRAIN_LIST = op.realpath("experiments/training/data/hcp_train_ids.txt")
+ABS_PATH = "/path/to/absolute/path"
+REST_DIR = op.realpath(op.join(ABS_PATH, "/experiments/training/data/rest"))
+TASK_DIR = op.realpath(op.join(ABS_PATH, "/experiments/training/data/task"))
+WORKING_DIR = op.realpath(op.join(ABS_PATH, "/experiments/training/results/tavor"))
+TRAIN_LIST = op.realpath(
+    op.join(ABS_PATH, "/experiments/training/data/hcp_train_ids.txt")
+)
 N_JOBS = 16
 N_CONTRASTS = 47
 

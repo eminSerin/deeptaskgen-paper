@@ -4,21 +4,31 @@ import sys
 import pytorch_lightning as pl
 import torch
 
-sys.path.append("../../../..")
+sys.path.append(op.abspath(op.join(__file__, "../../../..")))
 from deeptaskgen.deeptaskgen.models.unet import UNet3DMinimal
+
+ABS_PATH = sys.path[-1]
 
 # Model trained on HCP-YA with 47 task contrasts maps.
 REF_MODEL = torch.load(
-    "experiments/training/results/unetminimal_100_0.001/best_r2.ckpt",
+    op.join(
+        ABS_PATH, "experiments/training/results/unetminimal_100_0.001/best_r2.ckpt"
+    ),
     map_location="cpu",
 )
 # Finetuned models
 CHECKPOINT_MAP = {
     "emotion-faces-shapes": op.realpath(
-        "experiments/transfer_learning/hcp_development/results/finetuned_50_0.001_emotion-faces-shapes/best_r2.ckpt"
+        op.join(
+            ABS_PATH,
+            "experiments/transfer_learning/hcp_development/results/finetuned_50_0.001_emotion-faces-shapes/best_r2.ckpt",
+        )
     ),
     "gambling-reward": op.realpath(
-        "experiments/transfer_learning/hcp_development/results/finetuned_50_0.001_gambling-reward/best_r2.ckpt"
+        op.join(
+            ABS_PATH,
+            "experiments/transfer_learning/hcp_development/results/finetuned_50_0.001_gambling-reward/best_r2.ckpt",
+        )
     ),
 }
 

@@ -12,36 +12,53 @@ from joblib import Parallel, delayed
 from nilearn.image import crop_img, resample_to_img
 from tqdm import tqdm
 
-sys.path.append("../../..")
+sys.path.append(op.abspath(op.join(__file__, "../../..")))
 from utils.utils import get_contrasts
 
 SUBJ_IDS = np.genfromtxt("training/data/hcp_test_ids.txt", dtype=str)
-N_JOBS = 4
+N_JOBS = 1
 
 # Define paths.
-MNI_CROP_MASK = "utils/templates/MNI_2mm_brain_mask_crop.nii"
-RAW_DIR = "training/data/raw_retest"
-OUT_DIR = op.realpath("training/data/task_retest")
+ABS_PATH = sys.path[-1]
+MNI_CROP_MASK = op.join(ABS_PATH, "utils/templates/MNI_2mm_brain_mask_crop.nii")
+RAW_DIR = op.join(ABS_PATH, "training/data/raw_retest")
+OUT_DIR = op.realpath(op.join(ABS_PATH, "training/data/task_retest"))
 
 # Define path to FS spaces.
 fsaverage = {
     "L": op.realpath(
-        "utils/templates/resample_fsaverage/fsaverage_std_sphere.L.164k_fsavg_L.surf.gii"
+        op.join(
+            ABS_PATH,
+            "utils/templates/resample_fsaverage/fsaverage_std_sphere.L.164k_fsavg_L.surf.gii",
+        )
     ),
     "R": op.realpath(
-        "utils/templates/resample_fsaverage/fsaverage_std_sphere.R.164k_fsavg_R.surf.gii"
+        op.join(
+            ABS_PATH,
+            "utils/templates/resample_fsaverage/fsaverage_std_sphere.R.164k_fsavg_R.surf.gii",
+        )
     ),
 }
 fsLR = {
     "L": op.realpath(
-        "utils/templates/resample_fsaverage/fs_LR-deformed_to-fsaverage.L.sphere.32k_fs_LR.surf.gii"
+        op.join(
+            ABS_PATH,
+            "utils/templates/resample_fsaverage/fs_LR-deformed_to-fsaverage.L.sphere.32k_fs_LR.surf.gii",
+        )
     ),
     "R": op.realpath(
-        "utils/templates/resample_fsaverage/fs_LR-deformed_to-fsaverage.R.sphere.32k_fs_LR.surf.gii"
+        op.join(
+            ABS_PATH,
+            "utils/templates/resample_fsaverage/fs_LR-deformed_to-fsaverage.R.sphere.32k_fs_LR.surf.gii",
+        )
     ),
 }
 fsaverage_MNI = nib.load(
-    op.join("utils/regfusion/templates/FSL_MNI152_FS4.5.0_cortex_estimate.nii")
+    op.join(
+        op.join(
+            ABS_PATH, "utils/regfusion/templates/FSL_MNI152_FS4.5.0_cortex_estimate.nii"
+        )
+    )
 )
 
 
@@ -114,12 +131,12 @@ def cifti2MNI(subj_dir, rm_file=True):
             # Project fsaverage to MNI
             print(f"Projecting {file} to MNI...")
             subprocess.run(
-                f'cd {op.realpath("utils/")} && matlab -nodisplay -nosplash -nodesktop -r "fsaverage2vol(\\"{tmp_dir}\\"); quit"',
+                f'cd {op.realpath(op.join(ABS_PATH, "utils/"))} && matlab -nodisplay -nosplash -nodesktop -r "fsaverage2vol(\\"{tmp_dir}\\"); quit"',
                 check=True,
                 shell=True,
             )
             # Combine projected cortex and subcortex
-            print(f"Combining projected cortex and subcortex...")
+            print("Combining projected cortex and subcortex...")
             combine_projected_cortex_subcortex(
                 op.join(tmp_dir, "proj_img.mat"),
                 op.join(tmp_dir, "vol.nii.gz"),

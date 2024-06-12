@@ -12,28 +12,41 @@ from sklearn.preprocessing import MinMaxScaler
 from tqdm import tqdm
 from umap import UMAP
 
-sys.path.append("../../..")
+sys.path.append(op.abspath(op.join(__file__, "../../..")))
 from utils.utils import get_contrasts
 
-MASK = nib.load("utils/templates/MNI_2mm_brain_mask_crop.nii")
-UMAP_DIR = "validation/2_umaps/umaps"
+ABS_PATH = sys.path[-1]
+MASK = nib.load(op.join(ABS_PATH, "utils/templates/MNI_2mm_brain_mask_crop.nii"))
+UMAP_DIR = op.join(ABS_PATH, "validation/2_umaps/umaps")
 
 CONTRASTS = np.array(
     [f"{contrast[0]} {contrast[2]}" for contrast in np.array(get_contrasts())]
 )
 
 DIRECTORY_MAP = {
-    "hcp_actual": "training/data/task/contrast_z_maps",
-    "hcp_pred": "training/results/unetminimal_100_0.001/contrast_z_maps",
-    "hcpd_pred": "experiments/transfer_learning/hcp_development/results/finetuned_50_0.001_emotion-faces-shapes/contrast_z_maps",
-    "ukb_pred": "experiments/transfer_learning/ukb/results/finetuned_50_0.001_emotion-faces-shapes/contrast_z_maps",
+    "hcp_actual": op.join(ABS_PATH, "training/data/task/contrast_z_maps"),
+    "hcp_pred": op.join(
+        ABS_PATH, "training/results/unetminimal_100_0.001/contrast_z_maps"
+    ),
+    "hcpd_pred": op.join(
+        ABS_PATH,
+        "experiments/transfer_learning/hcp_development/results/finetuned_50_0.001_emotion-faces-shapes/contrast_z_maps",
+    ),
+    "ukb_pred": op.join(
+        ABS_PATH,
+        "experiments/transfer_learning/ukb/results/finetuned_50_0.001_emotion-faces-shapes/contrast_z_maps",
+    ),
 }
 
 SUBJ_IDS = {
-    "hcp_actual": "training/data/hcp_all_ids.txt",
-    "hcp_pred": "training/data/hcp_all_ids.txt",
-    "hcpd_pred": "experiments/transfer_learning/hcp_development/data/hcpd_all_ids.txt",
-    "ukb_pred": "experiments/transfer_learning/ukb/data/ukb_test_ids.txt",
+    "hcp_actual": op.join(ABS_PATH, "training/data/hcp_all_ids.txt"),
+    "hcp_pred": op.join(ABS_PATH, "training/data/hcp_all_ids.txt"),
+    "hcpd_pred": op.join(
+        ABS_PATH, "experiments/transfer_learning/hcp_development/data/hcpd_all_ids.txt"
+    ),
+    "ukb_pred": op.join(
+        ABS_PATH, "experiments/transfer_learning/ukb/data/ukb_test_ids.txt"
+    ),
 }
 N_JOBS = 4
 RAND_SEED = 1
