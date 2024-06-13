@@ -9,7 +9,7 @@ from joblib import Parallel, delayed
 from nilearn.masking import apply_mask
 from tqdm import tqdm
 
-sys.path.append(op.abspath(op.join(__file__, "../../..")))
+sys.path.append(op.abspath(op.join(__file__, "../../../..")))
 from utils.dual_regression import _extract_timeseries
 from utils.utils import compute_corr_coeff, crop_img_w_ref
 
@@ -23,7 +23,7 @@ SUBJ_IDS = np.genfromtxt(
     op.join(ABS_PATH, "transfer_learning/hcp_development/data/hcpd_all_ids.txt"),
     dtype=str,
 )
-N_CORES = 4
+N_CORES = 1
 
 
 def extract_ts(input, mask, ica, output):
