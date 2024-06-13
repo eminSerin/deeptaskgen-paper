@@ -1,24 +1,23 @@
 import os.path as op
 import sys
-from logging import config
 
 import pytorch_lightning as pl
 import torch
 
-sys.path.append("../../../..")
-from deeptaskgen.deeptaskgen.models.unet import UNet3DMinimal
+sys.path.append(op.abspath(op.join(__file__, "../../../../../deeptaskgen")))
+from deeptaskgen.models.unet import UNet3DMinimal  # type: ignore
 
 # Model trained on HCP-YA with 47 task contrast maps.
-REF_MODEL = torch.load(
-    "experiments/training/results/unetminimal_100_0.001/best_r2.ckpt",
-    map_location="cpu",
+ABS_PATH = op.abspath(op.join(__file__, "../../../../.."))
+REF_MODEL = op.join(
+    ABS_PATH, "experiments/training/results/unetminimal_100_0.001/best_r2.ckpt"
 )
 
 """Init Model"""
 pretrained_model = UNet3DMinimal.load_from_checkpoint(
     REF_MODEL,
     in_chans=50,
-    out_chans=1,
+    out_chans=47,
     fdim=64,
     activation="relu_inplace",
     optimizer="adam",
@@ -45,7 +44,9 @@ pretrained_model.out_block[1].weight.data, pretrained_model.out_block[1].bias.da
     base_out_bias,
 )
 # Save model
-out_mdl_path = op.realpath("experiments/transfer_learning/uk_biobank/preprocessing")
+out_mdl_path = op.realpath(
+    op.join(ABS_PATH, "experiments/transfer_learning/uk_biobank")
+)
 trainer = pl.Trainer(default_root_dir=out_mdl_path)
 trainer.strategy.connect(pretrained_model)
 trainer.save_checkpoint(op.join(out_mdl_path, "hcp-ya_emotion-faces-shapes.ckpt"))

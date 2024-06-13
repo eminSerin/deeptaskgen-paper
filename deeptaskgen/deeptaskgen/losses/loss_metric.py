@@ -2,8 +2,19 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from datasets.utils import MaskTensor
 from torchmetrics import functional as FM
+
+try:
+    from datasets.utils import MaskTensor
+except ImportError:
+    import os.path as op
+    import sys
+
+    path = op.abspath(op.join(op.dirname(__file__), ".."))
+    if path not in sys.path:
+        sys.path.append(path)
+    del sys, path, op
+    from datasets.utils import MaskTensor
 
 ##TODO: Add docstrings!
 

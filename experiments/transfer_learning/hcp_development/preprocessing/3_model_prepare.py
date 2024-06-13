@@ -5,16 +5,13 @@ import sys
 import pytorch_lightning as pl
 import torch
 
-sys.path.append(op.abspath(op.join(__file__, "../../../..")))
-from deeptaskgen.deeptaskgen.models.unet import UNet3DMinimal
+sys.path.append(op.abspath(op.join(__file__, "../../../../../deeptaskgen")))
+from deeptaskgen.models.unet import UNet3DMinimal  # type: ignore
 
 # Model trained on HCP-YA with 47 task contrast maps.
-ABS_PATH = sys.path[-1]
-REF_MODEL = torch.load(
-    op.join(
-        ABS_PATH, "experiments/training/results/unetminimal_100_0.001/best_r2.ckpt"
-    ),
-    map_location="cpu",
+ABS_PATH = op.abspath(op.join(__file__, "../../../../.."))
+REF_MODEL = op.join(
+    ABS_PATH, "experiments/training/results/unetminimal_100_0.001/best_r2.ckpt"
 )
 CONT_MAP = {"emotion-faces-shapes": 11, "gambling-reward": 45}
 
@@ -23,7 +20,7 @@ CONT_MAP = {"emotion-faces-shapes": 11, "gambling-reward": 45}
 base_model = UNet3DMinimal.load_from_checkpoint(
     REF_MODEL,
     in_chans=50,
-    out_chans=1,
+    out_chans=47,
     fdim=64,
     activation="relu_inplace",
     optimizer="adam",
@@ -60,7 +57,7 @@ for cont in CONT_MAP:
     )
     # Save model
     out_mdl_path = op.realpath(
-        op.join(ABS_PATH, "experiments/transfer_learning/hcp_development/preprocessing")
+        op.join(ABS_PATH, "experiments/transfer_learning/hcp_development")
     )
     trainer = pl.Trainer(default_root_dir=out_mdl_path)
     trainer.strategy.connect(pretrained_model)

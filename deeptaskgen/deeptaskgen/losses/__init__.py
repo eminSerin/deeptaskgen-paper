@@ -1,1 +1,3 @@
-from .loss_metric import RCLossAnneal, corrcoef, r2_score, rc_loss, vae_loss
+__all__ = ["corrcoef", "r2_score", "r2_loss", "R2", "MSELoss", "PearsonCorr"]
+
+from .loss_metric import R2, MSELoss, PearsonCorr, corrcoef, r2_loss, r2_score
