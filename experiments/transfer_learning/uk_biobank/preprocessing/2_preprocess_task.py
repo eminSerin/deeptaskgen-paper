@@ -7,13 +7,16 @@ import numpy as np
 from joblib import Parallel, delayed
 from tqdm import tqdm
 
-sys.path.append("../../..")
-from utils.utils import crop_img_w_ref
+sys.path.appendsys.path.append(op.abspath(op.join(__file__, "../../../..")))
+from utils.utils import crop_img_w_ref  # noqa: E402
 
-MNI_CROP_MASK = "utils/templates/MNI_2mm_brain_mask_crop.nii"
-RAW_DIR = "transfer_learning/uk_biobank/data/raw"
-OUT_DIR = "transfer_learning/uk_biobank/data/task_faces"
-SUBJ_IDS = np.genfromtxt("transfer_learning/ukb/data/ukb_all_ids.txt", dtype=str)
+ABS_PATH = sys.path[-1]
+MNI_CROP_MASK = op.join(ABS_PATH, "utils/templates/MNI_2mm_brain_mask_crop.nii")
+RAW_DIR = op.join(ABS_PATH, "transfer_learning/uk_biobank/data/raw")
+OUT_DIR = op.join(ABS_PATH, "transfer_learning/uk_biobank/data/task_faces")
+SUBJ_IDS = np.genfromtxt(
+    op.join(ABS_PATH, "transfer_learning/ukb/data/ukb_all_ids.txt"), dtype=str
+)
 COPE_LIST = ["zstat5"]
 N_CORES = 4
 
