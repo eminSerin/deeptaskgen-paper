@@ -11,7 +11,7 @@ from deeptaskgen.models.unet import UNet3DMinimal  # type: ignore
 # Model trained on HCP-YA with 47 task contrast maps.
 ABS_PATH = op.abspath(op.join(__file__, "../../../../.."))
 REF_MODEL = op.join(
-    ABS_PATH, "experiments/training/results/unetminimal_100_0.001/allset/last.ckpt"
+    ABS_PATH, "experiments/training/results/unetminimal_100_0.001/best_r2.ckpt"
 )
 CONT_MAP = {"emotion-faces-shapes": 11, "gambling-reward": 45}
 
