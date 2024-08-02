@@ -21,7 +21,8 @@ MNI_CROP_MASK = op.join(ABS_PATH, "utils/templates/MNI_2mm_brain_mask_crop.nii")
 INPUT_DIR = op.join(ABS_PATH, "transfer_learning/uk_biobank/data/rest")
 OUT_DIR = op.join(ABS_PATH, "transfer_learning/uk_biobank/data/connectome")
 SUBJs = np.loadtxt(
-    op.join(ABS_PATH, "transfer_learning/uk_biobank/data/ukb_test_ids.txt"), dtype=str
+    op.join(ABS_PATH, "transfer_learning/uk_biobank/data/ukb_predict_ids.txt"),
+    dtype=str,
 )
 
 
