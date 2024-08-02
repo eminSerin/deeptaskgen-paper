@@ -163,9 +163,8 @@ cython_debug/
 
 # Data and Results Folders
 test*.*
-experiments/training/data*
-experiments/transfer_learning/*/data*
-experiments/transfer_learning/*/data*
+# experiments/training/data*
+# experiments/transfer_learning/*/data*
 experiments/training/results*
 experiments/transfer_learning/*/results*
 experiments/transfer_learning/*/results*
