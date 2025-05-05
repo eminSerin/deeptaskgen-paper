@@ -67,10 +67,28 @@ if __name__ == "__main__":
                     ABS_PATH,
                     "validation/3_prediction/__ukb_phenotypes/50_health_outcomes.csv",
                 ),
-                usecols=["eid", "2178-2.0"],
+                usecols=[
+                    "eid",
+                    "2178-2.0",
+                    "20002-0.1261",
+                    "2443-2.0",
+                    "20002-0.1286",
+                    "20002-0.1263",
+                    "20002-0.1065",
+                ],
                 chunksize=chunksize,
             )
-        ).rename(columns={"2178-2.0": "overall_health", "eid": "subject"}),
+        ).rename(
+            columns={
+                "eid": "subject",
+                "2178-2.0": "overall_health",
+                "20002-0.1261": "multiple_sclerosis",
+                "2443-2.0": "diabetes",
+                "20002-0.1286": "depression",
+                "20002-0.1263": "dementia",
+                "20002-0.1065": "hypertension",
+            }
+        ),
         on="subject",
     )
 
@@ -115,8 +133,14 @@ if __name__ == "__main__":
                 ABS_PATH,
                 "validation/3_prediction/__ukb_phenotypes/13_lifestyle_and_environment_alcohol.csv",
             ),
-            usecols=["eid", "1558-2.0"],
-        ).rename(columns={"eid": "subject", "1558-2.0": "alcohol_freq"}),
+            usecols=["eid", "1558-2.0", "1588-2.0"],
+        ).rename(
+            columns={
+                "eid": "subject",
+                "1558-2.0": "alcohol_freq",
+                "1588-2.0": "beer_freq",
+            }
+        ),
         on="subject",
     )
 

@@ -6,18 +6,18 @@ import pytorch_lightning as pl
 import torch
 
 sys.path.append(op.abspath(op.join(__file__, "../../../../../deeptaskgen")))
-from deeptaskgen.models.unet import UNet3DMinimal  # type: ignore
+from deeptaskgen.models.unet import AttentionUNet3D  # type: ignore
 
 # Model trained on HCP-YA with 47 task contrast maps.
 ABS_PATH = op.abspath(op.join(__file__, "../../../../.."))
 REF_MODEL = op.join(
-    ABS_PATH, "experiments/training/results/unetminimal_100_0.001/best_r2.ckpt"
+    ABS_PATH, "experiments/training/results/attentionunet_100_0.001_gm/allset/last.ckpt"
 )
 CONT_MAP = {"emotion-faces-shapes": 11, "gambling-reward": 45}
 
 
 """Init Model"""
-base_model = UNet3DMinimal.load_from_checkpoint(
+base_model = AttentionUNet3D.load_from_checkpoint(
     REF_MODEL,
     in_chans=50,
     out_chans=47,
@@ -25,7 +25,6 @@ base_model = UNet3DMinimal.load_from_checkpoint(
     activation="relu_inplace",
     optimizer="adam",
     up_mode="trilinear",
-    loss_fn="mse",
     max_level=1,
     n_conv=1,
 ).to("cpu")

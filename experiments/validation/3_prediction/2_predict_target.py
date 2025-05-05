@@ -17,7 +17,9 @@ sys.path.append(op.abspath(op.join(__file__, "../../..")))
 from validation.utils.utils import DataLoader, compute_metrics
 
 ABS_PATH = sys.path[-1]
-MASK = nib.load(op.join(ABS_PATH, "utils/templates/MNI_2mm_brain_mask_crop.nii"))
+MASK = nib.load(
+    op.join(ABS_PATH, "experiments/utils/templates/MNI_2mm_GM_mask_crop.nii")
+)
 
 CONFIG = {
     "kfold": 5,
@@ -35,14 +37,16 @@ TARGET_MAP = {
     "age": "regression",
     "sex": "classification",
     "fluid": "regression",
-    "overall_health": "regression",
     "strength": "regression",
+    "overall_health": "regression",
     "depression": "classification",
-    "neuroticism": "regression",
+    "hypertension": "classification",
     "PHQ": "regression",
     "alcohol_freq": "regression",
+    "beer_freq": "regression",
     "RDS": "regression",
     "GAD": "regression",
+    "neuroticism": "regression",
 }
 
 TARGET_PATH = op.join(

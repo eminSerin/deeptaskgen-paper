@@ -9,40 +9,32 @@ from joblib import Parallel, delayed
 from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 
-ABS_PATH = op.abspath(op.join(__file__, "../../../.."))
-REST_DIR = op.realpath(
-    op.join(ABS_PATH, "experiments/transfer_learning/hcp_development/data/rest")
-)
-WORKING_DIR = op.realpath(
-    op.join(ABS_PATH, "experiments/transfer_learning/hcp_development/results/tavor/")
-)
-TRAIN_DIR = op.join(ABS_PATH, "experiments/training/results/hcp-ya_tavor_fixed/")
-PREDS_DIR = op.join(WORKING_DIR, "pred")
-os.makedirs(PREDS_DIR, exist_ok=True)
-TEST_LIST = op.realpath(
-    op.join(
-        ABS_PATH, "experiments/transfer_learning/hcp_development/data/hcpd_test_ids.txt"
-    )
-)
+sys.path.append(op.abspath(op.join(__file__, "../../..")))
+from experiments.utils import tavor
+
+sys.modules["tavor"] = tavor
+
+sys.path.append(op.abspath(op.join(__file__, "../../..")))
+ABS_PATH = sys.path[-1]
+REST_DIR = op.realpath(op.join(ABS_PATH, "experiments/training/data/rest"))
+TASK_DIR = op.realpath(op.join(ABS_PATH, "experiments/training/data/task"))
+WORKING_DIR = op.realpath(op.join(ABS_PATH, "experiments/training/results/tavor"))
+PRED_DIR = op.join(WORKING_DIR, "pred")
+os.makedirs(PRED_DIR, exist_ok=True)
 PARCEL_IMG = nib.load(  # 50 Labels from Group-ICA
     op.join(
         ABS_PATH,
-        "experiments/utils/templates/melodic_IC_MNI_dlabel_crop.nii",
+        "utils/templates/melodic_IC_MNI_dlabel_crop.nii",
     )
 )
 PARCEL_MASK = PARCEL_IMG.get_fdata()
 PARCEL_IDX = np.setdiff1d(np.unique(PARCEL_MASK), [0])  # Remove 0 label (background)
 N_PARCELS = len(PARCEL_IDX)  # 50 parcels
-SUBJECTS = np.genfromtxt(
-    op.join(
-        ABS_PATH, "experiments/transfer_learning/hcp_development/data/hcpd_test_ids.txt"
-    ),
-    dtype=str,
-)
+TEST_LIST = op.realpath(op.join(ABS_PATH, "experiments/training/data/hcp_test_ids.txt"))
 N_JOBS = 16
 N_CONTRASTS = 47
-N_SAMPLES = 1
-N_ROIS = 50
+N_SAMPLES = 8
+N_ROIS = N_PARCELS
 SEED = 42
 
 np.random.seed(SEED)
@@ -62,7 +54,7 @@ def predict_parcel(coef_, X, standardize=True):
 
 
 def predict_subject(coefs, subject, n_samples=8, overwrite=False):
-    out_file = op.join(PREDS_DIR, f"{subject}_pred.npy")
+    out_file = op.join(PRED_DIR, f"{subject}_pred.npy")
     if op.exists(out_file) and not overwrite:
         print(f"Skipping {subject} because it already exists")
         return
@@ -75,17 +67,17 @@ def predict_subject(coefs, subject, n_samples=8, overwrite=False):
                     coefs[c, p, :], rest[..., PARCEL_MASK == p_idx].T
                 )
     np.save(
-        op.join(PREDS_DIR, f"{subject}_pred.npy"),
+        op.join(PRED_DIR, f"{subject}_pred.npy"),
         y_pred,
     )
 
 
 if __name__ == "__main__":
-    print("Predicting test set from HCP-D dataset...")
-    with open(op.join(TRAIN_DIR, "tavor_hcp-ya_model.pkl"), "rb") as f:
+    print("Predicting test set from HCP-YA dataset...")
+    with open(op.join(WORKING_DIR, "tavor_hcp-ya_model.pkl"), "rb") as f:
         model = pickle.load(f)
     coefs = model["coefs"].mean(axis=0)  # Average over training subjects
     Parallel(n_jobs=N_JOBS)(
         delayed(predict_subject)(coefs, subject, n_samples=N_SAMPLES, overwrite=False)
-        for subject in tqdm(SUBJECTS)
+        for subject in tqdm(TEST_LIST)
     )

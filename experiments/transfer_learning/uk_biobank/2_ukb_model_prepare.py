@@ -5,7 +5,7 @@ import pytorch_lightning as pl
 import torch
 
 sys.path.append(op.abspath(op.join(__file__, "../../../../deeptaskgen")))
-from deeptaskgen.models.unet import UNet3DMinimal  # type: ignore
+from deeptaskgen.models.unet import AttentionUNet3D  # type: ignore
 
 ABS_PATH = op.abspath(op.join(__file__, "../../../.."))
 
@@ -13,20 +13,21 @@ ABS_PATH = op.abspath(op.join(__file__, "../../../.."))
 CHECKPOINT = op.realpath(
     op.join(
         ABS_PATH,
-        "experiments/transfer_learning/uk_biobank/results/finetuned_50_0.001/best_r2.ckpt",
+        "experiments/transfer_learning/uk_biobank/results/finetuned_50_0.001/best_corr.ckpt",
     )
 )
 
 # Model trained on HCP-YA with 47 task contrast maps.
 REF_MODEL = torch.load(
     op.join(
-        ABS_PATH, "experiments/training/results/unetminimal_100_0.001/best_r2.ckpt"
+        ABS_PATH,
+        "experiments/training/results/attentionunet_100_0.001_gm/best_corr.ckpt",
     ),
     map_location="cpu",
 )
 
 """Init Model"""
-finetuned_model = UNet3DMinimal.load_from_checkpoint(
+finetuned_model = AttentionUNet3D.load_from_checkpoint(
     CHECKPOINT,
     in_chans=50,
     out_chans=1,
@@ -34,7 +35,6 @@ finetuned_model = UNet3DMinimal.load_from_checkpoint(
     activation="relu_inplace",
     optimizer="adam",
     up_mode="trilinear",
-    loss_fn="mse",
     max_level=1,
     n_conv=1,
 ).to("cpu")
@@ -46,4 +46,4 @@ finetuned_model.out_block[1].weight.data, finetuned_model.out_block[1].bias.data
 # Save model
 trainer = pl.Trainer(default_root_dir=op.dirname(CHECKPOINT))
 trainer.strategy.connect(finetuned_model)
-trainer.save_checkpoint(CHECKPOINT.replace("best_r2.ckpt", "best_r2_all.ckpt"))
+trainer.save_checkpoint(CHECKPOINT.replace("best_corr.ckpt", "best_corr_all.ckpt"))

@@ -14,13 +14,14 @@ warnings.filterwarnings("ignore")
 
 ABS_PATH = sys.path[-1]
 MNI_CROP_MASK = op.join(
-    ABS_PATH, "experiments/utils/templates/MNI_2mm_brain_mask_crop.nii"
+    ABS_PATH, "experiments/utils/templates/MNI_2mm_GM_mask_crop.nii"
 )
+MASK_IDX = np.nonzero(nib.load(MNI_CROP_MASK).get_fdata())
 ACTUAL_PATH = op.join(ABS_PATH, "experiments/training/data/task")
 TEST_SUBJ = op.join(ABS_PATH, "experiments/training/data/hcp_test_ids.txt")
 TASK_MAP = {
     "deeptaskgen": op.join(
-        ABS_PATH, "experiments/training/results/unetminimal_100_0.001/pred"
+        ABS_PATH, "experiments/training/results/attentionunet_100_0.001_gm/pred"
     ),
     "tavor": op.join(ABS_PATH, "experiments/training/results/tavor/pred"),
     "retest": op.join(ABS_PATH, "experiments/training/data/task_retest"),
@@ -76,64 +77,32 @@ def load_pred_contrasts(*args, **kwargs):
         raise ValueError("Invalid data shape!")
 
 
-def compute_corr(pred_tasks, actual_tasks, subj_path, retest=False):
-    # Load test IDs
-    subj_ids = np.genfromtxt(
-        subj_path,
-        dtype="<U13",
-    )
-    # Brain mask indices
-    mask_idx = np.nonzero(nib.load(MNI_CROP_MASK).get_fdata())
-
-    # Load test contrasts (i.e., y-true)
-    print("Loading actual task contrasts...")
-    test_contrasts = load_contrasts(
-        subj_ids, actual_tasks, EXT_MAP["actual"], n_jobs=N_JOBS
-    )[..., mask_idx[0], mask_idx[1], mask_idx[2]]
-    print(f"Actual contrasts shape: {test_contrasts.shape}")
-
-    # If predict_tasks is a file, then consider it as average.
-    print("Loading contrasts...")
-    if op.isdir(pred_tasks):
-        if not retest:
-            pred_cont = load_pred_contrasts(
-                subj_ids, pred_tasks, EXT_MAP["pred"], n_jobs=N_JOBS
-            )[..., mask_idx[0], mask_idx[1], mask_idx[2]]
-        else:
-            pred_cont = load_contrasts(
-                subj_ids, pred_tasks, EXT_MAP["actual"], n_jobs=N_JOBS
-            )[..., mask_idx[0], mask_idx[1], mask_idx[2]]
-    elif op.isfile(pred_tasks):
-        # If group average.
-        pred_cont = np.tile(np.load(pred_tasks), (subj_ids.shape[0], 1, 1, 1, 1))[
-            ..., mask_idx[0], mask_idx[1], mask_idx[2]
-        ]
-    else:
-        raise ValueError(
-            "Please provide either average task contrast or path for predicted contrast maps!"
-        )
-    print(f"Predicted contrasts shape: {pred_cont.shape}")
-    print("Computing correlation matrices...")
-    corr = compute_subj_contrast_corr(
-        pred_cont,
-        test_contrasts,
-        n_jobs=N_JOBS,
-    )
-    np.save(op.join(op.dirname(pred_tasks), "corr_scores.npy"), corr)
-
-
 if __name__ == "__main__":
+    print("Loading actual task contrasts...")
+    actual_maps = load_contrasts(
+        TEST_SUBJ, ACTUAL_PATH, "_joint_MNI_task_contrasts.npy", n_jobs=N_JOBS
+    )[..., MASK_IDX[0], MASK_IDX[1], MASK_IDX[2]]
+    print(f"Actual contrasts shape: {actual_maps.shape}")
     for task, task_path in TASK_MAP.items():
         print(f"Task: {task}")
-        if not op.exists(op.join(op.dirname(task_path), "corr_scores.npy")):
+        if not op.exists(op.join(op.dirname(task_path), f"corr_scores_{task}.npy")):
             if task == "group_avg":
-                compute_corr(task_path, ACTUAL_PATH, TEST_SUBJ)
+                pred_cont = np.tile(
+                    np.load(task_path), (TEST_SUBJ.shape[0], 1, 1, 1, 1)
+                )[..., MASK_IDX[0], MASK_IDX[1], MASK_IDX[2]]
             elif task == "retest":
-                compute_corr(
-                    task_path,
-                    ACTUAL_PATH,
-                    TEST_SUBJ,
-                    retest=True,
-                )
+                pred_cont = load_contrasts(
+                    TEST_SUBJ, task_path, "_joint_MNI_task_contrasts.npy", n_jobs=N_JOBS
+                )[..., MASK_IDX[0], MASK_IDX[1], MASK_IDX[2]]
             else:
-                compute_corr(task_path, ACTUAL_PATH, TEST_SUBJ)
+                pred_cont = load_pred_contrasts(
+                    TEST_SUBJ, task_path, "_pred.npy", n_jobs=N_JOBS
+                )[..., MASK_IDX[0], MASK_IDX[1], MASK_IDX[2]]
+            print(f"Predicted contrasts shape: {pred_cont.shape}")
+            print("Computing correlation matrices...")
+            corr = compute_subj_contrast_corr(
+                pred_cont,
+                actual_maps,
+                n_jobs=N_JOBS,
+            )
+            np.save(op.join(op.dirname(task_path), f"corr_scores_{task}.npy"), corr)

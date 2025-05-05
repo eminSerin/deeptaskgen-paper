@@ -24,7 +24,13 @@ PREDICT_FUNC = op.realpath(op.join(ABS_PATH, "deeptaskgen/deeptaskgen/predict.py
 
 # No-Finetuned model only trained on HCP-YA for 47 task contrasts.
 CHECKPOINT = op.realpath(
-    op.join(ABS_PATH, "experiments/training/results/unetminimal_100_0.001/best_r2.ckpt")
+    op.join(
+        ABS_PATH,
+        "experiments/training/results/attentionunet_100_0.001_gm/best_corr.ckpt",
+    )
+)
+PRED_MASK = op.realpath(
+    op.join(ABS_PATH, "experiments/utils/templates/MNI_2mm_GM_mask_crop.nii")
 )
 
 args = [
@@ -36,11 +42,12 @@ args = [
     "--n_out_channels=47",
     "--batch_norm=True",
     "--lr_scheduler=True",
-    "--architecture=unetminimal",
+    "--architecture=attentionunet",
     "--conv_dim=3",
     "--max_depth=1",
     "--n_conv_layers=1",
     "--fdim=64",
+    f"--pred_mask={PRED_MASK}",
 ]
 args = " ".join(args)
 

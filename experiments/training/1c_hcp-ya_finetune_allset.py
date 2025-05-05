@@ -10,14 +10,16 @@ ABS_PATH = sys.path[-1]
 
 # Prediction related args.
 EPOCHS = 20
-LR = 1e-3
-N_JOBS = 4
-BATCH_SIZE = 12
+N_JOBS = 10
+BATCH_SIZE = 10
 REST_DIR = op.realpath(op.join(ABS_PATH, "experiments/training/data/rest"))
 TASK_DIR = op.realpath(op.join(ABS_PATH, "experiments/training/data/task"))
 TRAIN_FUNC = op.join(ABS_PATH, "deeptaskgen/deeptaskgen/train.py")
 WORKING_DIR = op.realpath(
-    op.join(ABS_PATH, f"experiments/training/results/unetminimal_100_{LR}")
+    op.join(ABS_PATH, "experiments/training/results/attentionunet_100_0.001_gm")
+)
+LOSS_MASK = op.realpath(
+    op.join(ABS_PATH, "experiments/utils/templates/MNI_2mm_GM_mask_crop.nii")
 )
 
 # Subjects!
@@ -27,14 +29,14 @@ TRAIN_LIST = op.realpath(op.join(ABS_PATH, "experiments/training/data/hcp_all_id
 args = [
     f"--rest_dir={REST_DIR}",
     f"--task_dir={TASK_DIR}",
-    f"--working_dir={op.join(WORKING_DIR, "allset")}",
-    f"--checkpoint_file={op.join(WORKING_DIR, "best_r2.ckpt")}",
+    f"--working_dir={op.join(WORKING_DIR, 'allset')}",
+    f"--checkpoint_file={op.join(WORKING_DIR, 'best_corr.ckpt')}",
     "--loss=mse",
     f"--train_list={TRAIN_LIST}",
     "--run_validation=False",
     "--n_samples_per_subj=8",
     f"--n_workers={N_JOBS}",
-    "--architecture=unetminimal",
+    "--architecture=attentionunet",
     "--n_out_channels=47",
     f"--batch_size={BATCH_SIZE}",
     f"--n_epochs={EPOCHS}",
@@ -42,7 +44,9 @@ args = [
     "--max_depth=1",
     "--n_conv_layers=1",
     "--fdim=64",
-    f"--lr={LR}",
+    "--lr=0.001",
+    f"--loss_mask={LOSS_MASK}",
+    "--alpha=0.25",
 ]
 args = " ".join(args)
 

@@ -6,10 +6,6 @@ sys.path.append(op.abspath(op.join(__file__, "../../../..")))
 ABS_PATH = sys.path[-1]
 
 # Prediction related args.
-EPOCHS = 50
-LR = 1e-3
-N_JOBS = 4
-BATCH_SIZE = 12
 REST_DIR = op.join(ABS_PATH, "experiments/transfer_learning/hcp_development/data/rest")
 TASK_DIR = op.join(
     ABS_PATH, "experiments/transfer_learning/hcp_development/data/task_faces-shapes"
@@ -23,6 +19,9 @@ WORKING_DIR = op.join(
 CHECKPOINT = op.join(
     ABS_PATH,
     "experiments/transfer_learning/hcp_development/hcp-ya_emotion-faces-shapes.ckpt",
+)
+LOSS_MASK = op.realpath(
+    op.join(ABS_PATH, "experiments/utils/templates/MNI_2mm_GM_mask_crop.nii")
 )
 
 # Subjects!
@@ -38,21 +37,23 @@ args = [
     f"--rest_dir={REST_DIR}",
     f"--task_dir={TASK_DIR}",
     f"--working_dir={WORKING_DIR}",
-    "--loss=mse",
+    "--loss=crr",
     "--freeze_final_layer=True",
     f"--train_list={TRAIN_LIST}",
     f"--val_list={VAL_LIST}",
     f"--checkpoint_file={CHECKPOINT}",
     "--n_samples_per_subj=1",
-    f"--n_workers={N_JOBS}",
-    "--architecture=unetminimal",
+    "--n_workers=10",
+    "--architecture=attentionunet",
     "--n_out_channels=1",
-    f"--batch_size={BATCH_SIZE}",
-    f"--n_epochs={EPOCHS}",
+    "--batch_size=10",
+    "--n_epochs=50",
     "--max_depth=1",
     "--n_conv_layers=1",
     "--fdim=64",
-    f"--lr={LR}",
+    "--lr=0.001",
+    f"--loss_mask={LOSS_MASK}",
+    "--alpha=0.25",
 ]
 args = " ".join(args)
 

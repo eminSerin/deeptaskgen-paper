@@ -173,3 +173,8 @@ experiments/validation/2_umaps/umaps*
 experiments/validation/2_umaps/figures*
 experiments/validation/3_prediction/results*
 experiments/validation/3_prediction/figures*
+*rsfc.npy
+*contrasts.npy
+*pred.npy
+results*
+slurm*

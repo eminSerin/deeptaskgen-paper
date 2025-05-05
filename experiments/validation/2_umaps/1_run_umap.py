@@ -13,7 +13,9 @@ from umap import UMAP
 
 ABS_PATH = op.abspath(op.join(__file__, "../../.."))
 
-MASK = nib.load(op.join(ABS_PATH, "utils/templates/MNI_2mm_brain_mask_crop.nii"))
+MASK = nib.load(
+    op.join(ABS_PATH, "experiments/utils/templates/MNI_2mm_GM_mask_crop.nii")
+)
 
 UMAP_DIR = op.join(ABS_PATH, "validation/2_umaps/umaps")
 

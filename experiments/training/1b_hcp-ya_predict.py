@@ -11,12 +11,12 @@ LR = 1e-3
 REST_DIR = op.realpath(op.join(ABS_PATH, "experiments/training/data/rest"))
 PREDICT_FUNC = op.realpath(op.join(ABS_PATH, "deeptaskgen/deeptaskgen/predict.py"))
 WORKING_DIR = op.realpath(
-    op.join(ABS_PATH, f"experiments/training/results/unetminimal_{EPOCHS}_{LR}")
+    op.join(ABS_PATH, f"experiments/training/results/attentionunet_{EPOCHS}_{LR}_gm")
 )
 PRED_DIR = op.join(WORKING_DIR, "pred")
-
+PRED_MASK = op.join(ABS_PATH, "experiments/utils/templates/MNI_2mm_GM_mask_crop.nii")
 # Trained model.
-CHECKPOINT = op.realpath(op.join(ABS_PATH, WORKING_DIR, "best_r2.ckpt"))
+CHECKPOINT = op.realpath(op.join(ABS_PATH, WORKING_DIR, "best_corr.ckpt"))
 
 args = [
     f"--rest_dir={op.realpath(op.join(ABS_PATH, REST_DIR))}",
@@ -27,11 +27,12 @@ args = [
     "--n_out_channels=47",
     "--batch_norm=True",
     "--lr_scheduler=True",
-    "--architecture=unetminimal",
+    "--architecture=attentionunet",
     "--conv_dim=3",
     "--max_depth=1",
     "--n_conv_layers=1",
     "--fdim=64",
+    f"--pred_mask={PRED_MASK}",
 ]
 args = " ".join(args)
 
